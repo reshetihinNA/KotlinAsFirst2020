@@ -3,6 +3,8 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
+import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.sqrt
 
@@ -68,7 +70,13 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = TODO()
+fun ageDescription(age: Int): String {
+    return when {
+        age in 5..20 || age % 100 in 5..20 || age % 10 >= 5 || age % 10 == 0 -> "$age лет"
+        age % 10 == 1 -> "$age год"
+        else -> "$age года"
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -81,7 +89,22 @@ fun timeForHalfWay(
     t1: Double, v1: Double,
     t2: Double, v2: Double,
     t3: Double, v3: Double
-): Double = TODO()
+): Double {
+    val s1 = t1 * v1
+    val s2 = t2 * v2
+    val s3 = t3 * v3
+    val halfS = (s1 + s2 + s3) / 2
+    return when {
+        s1 == halfS -> t1
+        s1 > halfS -> halfS / v1
+        else ->
+            when {
+                s1 + s2 == halfS -> t1 + t2
+                s1 + s2 > halfS -> t1 + (halfS - s1) / v2
+                else -> t1 + t2 + (halfS - s1 - s2) / v3
+            }
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -96,7 +119,14 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int = TODO()
+): Int {
+    return when {
+        (kingX == rookX1 || kingY == rookY1) && kingX != rookX2 && kingY != rookY2 -> 1
+        (kingX == rookX2 || kingY == rookY2) && kingX != rookX1 && kingY != rookY1 -> 2
+        (kingX == rookX1 || kingY == rookY1) && (kingX == rookX2 || kingY == rookY2) -> 3
+        else -> 0
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -112,7 +142,17 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int = TODO()
+): Int {
+    return when {
+        (kingX == rookX || kingY == rookY) &&
+                (kingX - bishopX).absoluteValue != (kingY - bishopY).absoluteValue -> 1
+        kingX != rookX && kingY != rookY &&
+                (kingX - bishopX).absoluteValue == (kingY - bishopY).absoluteValue -> 2
+        (kingX == rookX || kingY == rookY) &&
+                (kingX - bishopX).absoluteValue == (kingY - bishopY).absoluteValue -> 3
+        else -> 0
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -122,7 +162,33 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    return when {
+        c > a + b || a > b + c || b > a + c -> -1
+        c >= a && c >= b ->
+            when {
+                sqr(a) + sqr(b) > sqr(c) -> 0
+                sqr(a) + sqr(b) == sqr(c) -> 1
+                sqr(a) + sqr(b) < sqr(c) -> 2
+                else -> -1
+            }
+        a >= c && a >= b ->
+            when {
+                sqr(c) + sqr(b) > sqr(a) -> 0
+                sqr(c) + sqr(b) == sqr(a) -> 1
+                sqr(c) + sqr(b) < sqr(a) -> 2
+                else -> -1
+            }
+        b >= a && b >= c ->
+            when {
+                sqr(a) + sqr(c) > sqr(b) -> 0
+                sqr(a) + sqr(c) == sqr(b) -> 1
+                sqr(a) + sqr(c) < sqr(b) -> 2
+                else -> -1
+            }
+        else -> -1
+    }
+}
 
 /**
  * Средняя (3 балла)
@@ -132,4 +198,13 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+    return when {
+        (a == d) || (b == c) -> 0
+        (a in c..d) && (d in a..b) -> d - a
+        (c in a..b) && (b in c..d) -> b - c
+        (c in a..b) && (d in a..b) -> d - c
+        (a in c..d) && (b in c..d) -> b - a
+        else -> -1
+    }
+}
