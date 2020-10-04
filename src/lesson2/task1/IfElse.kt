@@ -4,9 +4,7 @@ package lesson2.task1
 
 import lesson1.task1.discriminant
 import lesson1.task1.sqr
-import kotlin.math.absoluteValue
-import kotlin.math.max
-import kotlin.math.sqrt
+import kotlin.math.*
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
 // Максимальное количество баллов = 6
@@ -70,13 +68,12 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String {
-    return when {
-        age in 5..20 || age % 100 in 5..20 || age % 10 >= 5 || age % 10 == 0 -> "$age лет"
+fun ageDescription(age: Int) =
+    when {
+        age % 100 in 5..20 || age % 10 >= 5 || age % 10 == 0 -> "$age лет"
         age % 10 == 1 -> "$age год"
         else -> "$age года"
     }
-}
 
 /**
  * Простая (2 балла)
@@ -120,12 +117,14 @@ fun whichRookThreatens(
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
 ): Int {
-    return when {
-        (kingX == rookX1 || kingY == rookY1) && kingX != rookX2 && kingY != rookY2 -> 1
-        (kingX == rookX2 || kingY == rookY2) && kingX != rookX1 && kingY != rookY1 -> 2
-        (kingX == rookX1 || kingY == rookY1) && (kingX == rookX2 || kingY == rookY2) -> 3
-        else -> 0
+    if (kingX == rookX1 || kingY == rookY1) {
+        if (kingX == rookX2 || kingY == rookY2) return 3
+        if (kingX != rookX2 && kingY != rookY2) return 1
     }
+    if (kingX == rookX2 || kingY == rookY2) {
+        if (kingX != rookX1 && kingY != rookY1) return 2
+    }
+    return 0
 }
 
 /**
@@ -143,15 +142,14 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    return when {
-        (kingX == rookX || kingY == rookY) &&
-                (kingX - bishopX).absoluteValue != (kingY - bishopY).absoluteValue -> 1
-        kingX != rookX && kingY != rookY &&
-                (kingX - bishopX).absoluteValue == (kingY - bishopY).absoluteValue -> 2
-        (kingX == rookX || kingY == rookY) &&
-                (kingX - bishopX).absoluteValue == (kingY - bishopY).absoluteValue -> 3
-        else -> 0
+    if (kingX == rookX || kingY == rookY) {
+        return if ((kingX - bishopX).absoluteValue != (kingY - bishopY).absoluteValue) 3
+        else 1
     }
+    if (kingX != rookX && kingY != rookY) {
+        if ((kingX - bishopX).absoluteValue == (kingY - bishopY).absoluteValue) return 2
+    }
+    return 0
 }
 
 /**
@@ -163,30 +161,14 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
+    val g: Double = max(c, max(a, b))
+    val k1: Double = min(c, max(a, b))
+    val k2: Double = min(c, min(a, b))
     return when {
-        c > a + b || a > b + c || b > a + c -> -1
-        c >= a && c >= b ->
-            when {
-                sqr(a) + sqr(b) > sqr(c) -> 0
-                sqr(a) + sqr(b) == sqr(c) -> 1
-                sqr(a) + sqr(b) < sqr(c) -> 2
-                else -> -1
-            }
-        a >= c && a >= b ->
-            when {
-                sqr(c) + sqr(b) > sqr(a) -> 0
-                sqr(c) + sqr(b) == sqr(a) -> 1
-                sqr(c) + sqr(b) < sqr(a) -> 2
-                else -> -1
-            }
-        b >= a && b >= c ->
-            when {
-                sqr(a) + sqr(c) > sqr(b) -> 0
-                sqr(a) + sqr(c) == sqr(b) -> 1
-                sqr(a) + sqr(c) < sqr(b) -> 2
-                else -> -1
-            }
-        else -> -1
+        g > k1 + k2 -> -1
+        hypot(k1, k2) > g -> 0
+        hypot(k1, k2) == g -> 1
+        else -> 2
     }
 }
 
@@ -198,8 +180,8 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    return when {
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =
+    when {
         (a == d) || (b == c) -> 0
         (a in c..d) && (d in a..b) -> d - a
         (c in a..b) && (b in c..d) -> b - c
@@ -207,4 +189,3 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
         (a in c..d) && (b in c..d) -> b - a
         else -> -1
     }
-}
