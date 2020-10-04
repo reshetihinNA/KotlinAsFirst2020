@@ -143,8 +143,8 @@ fun rookOrBishopThreatens(
     bishopX: Int, bishopY: Int
 ): Int {
     if (kingX == rookX || kingY == rookY) {
-        return if ((kingX - bishopX).absoluteValue != (kingY - bishopY).absoluteValue) 3
-        else 1
+        return if ((kingX - bishopX).absoluteValue != (kingY - bishopY).absoluteValue) 1
+        else 3
     }
     if (kingX != rookX && kingY != rookY) {
         if ((kingX - bishopX).absoluteValue == (kingY - bishopY).absoluteValue) return 2
@@ -162,8 +162,8 @@ fun rookOrBishopThreatens(
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     val g: Double = max(c, max(a, b))
-    val k1: Double = min(c, max(a, b))
-    val k2: Double = min(c, min(a, b))
+    val k1: Double = min(c, min(a, b))
+    val k2: Double = a + b + c - g - k1
     return when {
         g > k1 + k2 -> -1
         hypot(k1, k2) > g -> 0
