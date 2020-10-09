@@ -160,7 +160,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val k1 = minOf(a, b, c)
     val k2 = a + b + c - g - k1
     return when {
-        g > k1 + k2 -> -1
+        k1 + k2 < g -> -1
         hypot(k1, k2) > g -> 0
         hypot(k1, k2) == g -> 1
         else -> 2
