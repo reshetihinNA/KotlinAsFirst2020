@@ -3,7 +3,6 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
-import lesson1.task1.sqr
 import kotlin.math.*
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
@@ -117,14 +116,12 @@ fun whichRookThreatens(
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
 ): Int {
-    if (kingX == rookX1 || kingY == rookY1) {
+    if (kingX != rookX1 && kingY != rookY1 && kingX != rookX2 && kingY != rookY2) return 0
+    else if (kingX == rookX1 || kingY == rookY1) {
         if (kingX == rookX2 || kingY == rookY2) return 3
-        if (kingX != rookX2 && kingY != rookY2) return 1
+        return 1
     }
-    if (kingX == rookX2 || kingY == rookY2) {
-        if (kingX != rookX1 && kingY != rookY1) return 2
-    }
-    return 0
+    return 2
 }
 
 /**
@@ -142,14 +139,12 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    if (kingX == rookX || kingY == rookY) {
-        return if ((kingX - bishopX).absoluteValue != (kingY - bishopY).absoluteValue) 1
-        else 3
+    if (kingX != rookX && kingY != rookY && abs((kingX - bishopX)) != abs((kingY - bishopY))) return 0
+    else if (kingX == rookX || kingY == rookY) {
+        if (abs((kingX - bishopX)) == abs((kingY - bishopY))) return 3
+        return 1
     }
-    if (kingX != rookX && kingY != rookY) {
-        if ((kingX - bishopX).absoluteValue == (kingY - bishopY).absoluteValue) return 2
-    }
-    return 0
+    return 2
 }
 
 /**
@@ -161,9 +156,9 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    val g: Double = max(c, max(a, b))
-    val k1: Double = min(c, min(a, b))
-    val k2: Double = a + b + c - g - k1
+    val g = maxOf(a, b, c)
+    val k1 = minOf(a, b, c)
+    val k2 = a + b + c - g - k1
     return when {
         g > k1 + k2 -> -1
         hypot(k1, k2) > g -> 0
