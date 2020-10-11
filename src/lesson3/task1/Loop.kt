@@ -74,7 +74,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun digitNumber(n: Int): Int =
-    if (n < 10) 1
+    if (abs(n) < 10) 1
     else 1 + digitNumber(n / 10)
 
 /**
@@ -84,8 +84,7 @@ fun digitNumber(n: Int): Int =
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int =
-    if (n <= 2) 1
-    else fib(n - 1) + fib(n - 2)
+    ((((1 + sqrt(5.0)) / 2).pow(n) - ((1 - sqrt(5.0)) / 2).pow(n)) / sqrt(5.0)).toInt()
 
 /**
  * Простая (2 балла)
@@ -148,7 +147,7 @@ fun lcm(m: Int, n: Int): Int {
     if (n % m == 0) return n
     else {
         while (ltm % m != 0 || ltm % n != 0) {
-            ltm++
+            ltm += maxOf(n, m)
         }
     }
     return ltm
@@ -177,7 +176,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
     if (sqrt(n.toDouble()) == floor(sqrt(n.toDouble())) || sqrt(m.toDouble()) == floor(sqrt(m.toDouble()))) return true
-    return floor(sqrt(n.toDouble())) - floor(sqrt(m.toDouble())) == 1.0
+    return floor(sqrt(n.toDouble())) - floor(sqrt(m.toDouble())) >= 1.0
 }
 
 /**
@@ -242,7 +241,7 @@ fun sin(x: Double, eps: Double): Double {
     val arg = c
     while (eps <= abs(c)) {
         sin += c
-        c *= -arg * arg / (2 * i * (2 * i + 1))
+        c *= -sqr(arg) / (2 * i * (2 * i + 1))
         i++
     }
     return sin
@@ -268,7 +267,7 @@ fun cos(x: Double, eps: Double): Double {
     c = 1.0
     while (eps <= abs(c)) {
         cos += c
-        c *= -arg * arg / (2 * i * (2 * i - 1))
+        c *= -sqr(arg) / (2 * i * (2 * i - 1))
         i++
     }
     return cos
