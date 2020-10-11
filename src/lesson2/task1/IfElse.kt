@@ -158,7 +158,7 @@ fun rookOrBishopThreatens(
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     val g = maxOf(a, b, c)
     val k1 = minOf(a, b, c)
-    val k2 = a + b + c - g - k1
+    val k2 = a + b + c - k1 - g
     return when {
         k1 + k2 < g -> -1
         hypot(k1, k2) > g -> 0
