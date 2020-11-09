@@ -229,7 +229,7 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 val trigonometryFunc = { x: Double, eps: Double, tFunc: Int ->
     var c = BigDecimal.valueOf(x)
-    if (x >= 2 * PI) c = BigDecimal.valueOf(x / (x / (2 * PI)).toInt())
+    while (c >= BigDecimal.valueOf(2 * PI)) c = c.minus(BigDecimal.valueOf(2.0 * PI))
     var func = BigDecimal.valueOf(0.0)
     var i = 1
     val arg = c

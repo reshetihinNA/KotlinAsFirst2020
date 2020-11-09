@@ -139,7 +139,7 @@ fun rookOrBishopThreatens(
 ): Int {
     val f1 = if (kingX == rookX || kingY == rookY) 1
     else 0
-    return if (abs((kingX - bishopX)) == abs((kingY - bishopY))) f1 + 2
+    return if ((kingX - bishopX).absoluteValue == (kingY - bishopY).absoluteValue) f1 + 2
     else f1
 }
 
