@@ -3,6 +3,7 @@
 package lesson3.task1
 
 import lesson1.task1.sqr
+import java.math.BigDecimal
 import kotlin.math.*
 
 // Урок 3: циклы
@@ -92,7 +93,7 @@ fun fib(n: Int): Int =
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    for (i in 2..n)
+    for (i in 2..sqrt(n.toFloat()).toInt())
         if (n % i == 0) return i
     return n
 }
@@ -102,11 +103,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    for (i in n - 1 downTo 2)
-        if (n % i == 0) return i
-    return 1
-}
+fun maxDivisor(n: Int) = n / minDivisor(n)
 
 /**
  * Простая (2 балла)
@@ -192,7 +189,6 @@ fun revert(n: Int): Int {
     for (i in 0..c) {
         v += ((n / ((10.0).pow(i)).toInt()) % 10) * (10.0).pow(c - i)
     }
-    if (v.toInt() == Int.MAX_VALUE) return 0
     return v.toInt()
 }
 
@@ -205,7 +201,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int) = revert(n) == n
+fun isPalindrome(n: Int) = revert(n) == n && revert(n) < Int.MAX_VALUE
 
 /**
  * Средняя (3 балла)
@@ -231,21 +227,24 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double {
-    var c = x
-    var sin = 0.0
+val trigonometryFunc = { x: Double, eps: Double, tFunc: Int ->
+    var c = BigDecimal.valueOf(x)
+    if (x >= 2 * PI) c = BigDecimal.valueOf(x / (x / (2 * PI)).toInt())
+    var func = BigDecimal.valueOf(0.0)
     var i = 1
-    if (x >= 2 * PI) {
-        while (c >= 2 * PI) c -= 2 * PI
-    }
     val arg = c
-    while (eps <= abs(c)) {
-        sin += c
-        c *= -sqr(arg) / (2 * i * (2 * i + 1))
+    if (tFunc != 1) c = BigDecimal.valueOf(1.0)
+    while (eps <= abs(c.toDouble())) {
+        func += c
+        c *= if (tFunc == 1) arg * -arg / (2 * i * (2 * i + 1)).toBigDecimal()
+        else arg * -arg / (2 * i * (2 * i - 1)).toBigDecimal()
         i++
     }
-    return sin
+    func.toDouble()
 }
+
+
+fun sin(x: Double, eps: Double) = trigonometryFunc(x, eps, 1)
 
 /**
  * Средняя (4 балла)
@@ -256,22 +255,7 @@ fun sin(x: Double, eps: Double): Double {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double {
-    var cos = 0.0
-    var i = 1
-    var c = x
-    if (x >= 2 * PI) {
-        while (c >= 2 * PI) c -= 2 * PI
-    }
-    val arg = c
-    c = 1.0
-    while (eps <= abs(c)) {
-        cos += c
-        c *= -sqr(arg) / (2 * i * (2 * i - 1))
-        i++
-    }
-    return cos
-}
+fun cos(x: Double, eps: Double) = trigonometryFunc(x, eps, 2)
 
 /**
  * Сложная (4 балла)
@@ -282,16 +266,22 @@ fun cos(x: Double, eps: Double): Double {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int {
+val searching = { num: Int, func: Int ->
+    val result: Int
     var count = 1
     var i = 1
-    while (count < n) {
+    while (count < num) {
         i++
-        count += digitNumber(sqr(i))
+        count += if (func == 1) digitNumber(sqr(i))
+        else digitNumber(fib(i))
     }
-    val d = count - n
-    return (sqr(i) / ((10.0).pow(d)).toInt()) % 10
+    val d = count - num
+    result = if (func == 1) (sqr(i) / ((10.0).pow(d)).toInt()) % 10
+    else (fib(i) / ((10.0).pow(d)).toInt()) % 10
+    result
 }
+
+fun squareSequenceDigit(n: Int): Int = searching(n, 1)
 
 /**
  * Сложная (5 баллов)
@@ -302,13 +292,5 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int {
-    var c = 1
-    var i = 1
-    while (c < n) {
-        i++
-        c += digitNumber(fib(i))
-    }
-    val d = c - n
-    return (fib(i) / ((10.0).pow(d)).toInt()) % 10
-}
+fun fibSequenceDigit(n: Int): Int = searching(n, 2)
+
