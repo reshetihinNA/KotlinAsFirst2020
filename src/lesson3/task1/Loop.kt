@@ -227,24 +227,24 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-val trigonometryFunc = { x: Double, eps: Double, tFunc: Int ->
-    var c = BigDecimal.valueOf(x)
-    while (c >= BigDecimal.valueOf(2 * PI)) c = c.minus(BigDecimal.valueOf(2.0 * PI))
+fun headerDef(x: Double, tFunDef: Boolean) = if (tFunDef) x else 1.0
+
+val trigonometryFunc = { x: Double, eps: Double, tFunc: Boolean, f: Int ->
+    val arg = if (x >= 2.0 * PI) BigDecimal.valueOf(x % (2.0 * PI))
+    else BigDecimal.valueOf(x)
     var func = BigDecimal.valueOf(0.0)
     var i = 1
-    val arg = c
-    if (tFunc != 1) c = BigDecimal.valueOf(1.0)
+    var c = BigDecimal.valueOf(headerDef(arg.toDouble(), tFunc))
     while (eps <= abs(c.toDouble())) {
         func += c
-        c *= if (tFunc == 1) arg * -arg / (2 * i * (2 * i + 1)).toBigDecimal()
-        else arg * -arg / (2 * i * (2 * i - 1)).toBigDecimal()
+        c *= arg * -arg / (2 * i * (2 * i + f)).toBigDecimal()
         i++
     }
     func.toDouble()
 }
 
 
-fun sin(x: Double, eps: Double) = trigonometryFunc(x, eps, 1)
+fun sin(x: Double, eps: Double) = trigonometryFunc(x, eps, true, 1)
 
 /**
  * Средняя (4 балла)
@@ -255,7 +255,7 @@ fun sin(x: Double, eps: Double) = trigonometryFunc(x, eps, 1)
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double) = trigonometryFunc(x, eps, 2)
+fun cos(x: Double, eps: Double) = trigonometryFunc(x, eps, false, -1)
 
 /**
  * Сложная (4 балла)
@@ -266,22 +266,21 @@ fun cos(x: Double, eps: Double) = trigonometryFunc(x, eps, 2)
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-val searching = { num: Int, func: Int ->
-    val result: Int
+fun funcDef(funDef: Boolean, i: Int) = if (funDef) sqr(i) else fib(i)
+
+val searching = { num: Int, func: Boolean ->
     var count = 1
     var i = 1
     while (count < num) {
         i++
-        count += if (func == 1) digitNumber(sqr(i))
-        else digitNumber(fib(i))
+        count += digitNumber(funcDef(func, i))
     }
     val d = count - num
-    result = if (func == 1) (sqr(i) / ((10.0).pow(d)).toInt()) % 10
-    else (fib(i) / ((10.0).pow(d)).toInt()) % 10
+    val result = (funcDef(func, i) / ((10.0).pow(d)).toInt()) % 10
     result
 }
 
-fun squareSequenceDigit(n: Int): Int = searching(n, 1)
+fun squareSequenceDigit(n: Int): Int = searching(n, true)
 
 /**
  * Сложная (5 баллов)
@@ -292,5 +291,5 @@ fun squareSequenceDigit(n: Int): Int = searching(n, 1)
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = searching(n, 2)
+fun fibSequenceDigit(n: Int): Int = searching(n, false)
 

@@ -148,7 +148,6 @@ fun mean(list: List<Double>): Double =
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     val middle = mean(list)
-    if (list.isEmpty()) return list
     for (i in list.indices) list[i] -= middle
     return list
 }
@@ -196,7 +195,6 @@ fun polynom(p: List<Int>, x: Int): Int {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    if (list.isEmpty()) return list
     for (i in 1 until list.size) {
         list[i] += list[i - 1]
     }
@@ -222,7 +220,7 @@ fun factorize(n: Int): List<Int> {
     }
     list.add(number)
     list.sort()
-    return list.toList()
+    return list
 }
 
 /**
@@ -234,13 +232,7 @@ fun factorize(n: Int): List<Int> {
  */
 fun factorizeToString(n: Int): String {
     val f = factorize(n)
-    return buildString {
-        for (i in f.indices) {
-            if (i != 0) append("*")
-            val fi = f[i]
-            append("$fi")
-        }
-    }
+    return f.joinToString(separator = "*")
 }
 
 /**
@@ -254,10 +246,11 @@ fun convert(n: Int, base: Int): List<Int> {
     val list = listOf<Int>().toMutableList()
     var number = n
     while (number / base != 0) {
-        list.add(0, number % base)
+        list.add(number % base)
         number /= base
     }
-    list.add(0, number)
+    list.add(number)
+    list.reverse()
     return list
 }
 
@@ -312,18 +305,10 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * (например, str.toInt(base)), запрещается.
  */
 fun decimalFromString(str: String, base: Int): Int {
-    val dList =
-        listOf(
-            '0', '1', '2', '3', '4', '5',
-            '6', '7', '8', '9', 'a', 'b',
-            'c', 'd', 'e', 'f', 'g', 'h',
-            'i', 'j', 'k', 'l', 'm', 'n',
-            'o', 'p', 'q', 'r', 's', 't',
-            'u', 'v', 'w', 'x', 'y', 'z'
-        )
     val list = listOf<Int>().toMutableList()
     for (i in str.indices) {
-        list.add(dList.indexOf(str[i]))
+        if (str[i] > '9') list.add(str[i].toInt() - 87)
+        else list.add(str[i].toInt() - 48)
     }
     return decimal(list, base)
 }
