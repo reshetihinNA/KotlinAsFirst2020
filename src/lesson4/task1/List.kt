@@ -174,7 +174,6 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Значение пустого многочлена равно 0 при любом x.
  */
 fun polynom(p: List<Int>, x: Int): Int {
-    if (p.isEmpty()) return 0
     var f = 0
     var c = 1
     for (i in p.indices) {
@@ -307,8 +306,8 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     val list = listOf<Int>().toMutableList()
     for (i in str.indices) {
-        if (str[i] > '9') list.add(str[i].toInt() - 87)
-        else list.add(str[i].toInt() - 48)
+        if (str[i] > '9') list.add(str[i].toInt() - ('a'.toInt() + 10))
+        else list.add(str[i].toInt() - '0'.toInt())
     }
     return decimal(list, base)
 }
@@ -403,8 +402,8 @@ fun russian(n: Int): String {
         for (i in digitsOfNumber.size - 1 downTo 0) {
             if (digitsOfNumber[i] != 0) {
                 when (i) {
-                    5 -> append(listHundreds[digitsOfNumber[i] - 1] + " ")
-                    4 -> {
+                    5, 2 -> append(listHundreds[digitsOfNumber[i] - 1] + " ")
+                    4, 1 -> {
                         if (digitsOfNumber[i] != 1) append(listDecs[digitsOfNumber[i] - 2] + " ")
                         else append(listDec[digitsOfNumber[i - 1]] + " ")
                     }
@@ -413,11 +412,6 @@ fun russian(n: Int): String {
                             if (digitsOfNumber[i] in 1..2) append(listThousands[digitsOfNumber[i] - 1] + " ")
                             else append(list[digitsOfNumber[i] - 1] + " ")
                         }
-                    }
-                    2 -> append(listHundreds[digitsOfNumber[i] - 1] + " ")
-                    1 -> {
-                        if (digitsOfNumber[i] != 1) append(listDecs[digitsOfNumber[i] - 2] + " ")
-                        else append(listDec[digitsOfNumber[i - 1]] + " ")
                     }
                     0 -> if (digitsOfNumber[i + 1] != 1) append(list[digitsOfNumber[i] - 1] + " ")
                 }

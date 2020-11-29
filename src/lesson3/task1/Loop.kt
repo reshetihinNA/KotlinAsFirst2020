@@ -184,12 +184,12 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun revert(n: Int): Int {
-    var v = 0.0
+    var v = 0
     val c = digitNumber(n) - 1
     for (i in 0..c) {
-        v += ((n / ((10.0).pow(i)).toInt()) % 10) * (10.0).pow(c - i)
+        v += ((n / ((10.0).pow(i)).toInt()) % 10) * (10.0).pow(c - i).toInt()
     }
-    return v.toInt()
+    return v
 }
 
 /**
@@ -201,7 +201,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int) = revert(n) == n && revert(n) < Int.MAX_VALUE
+fun isPalindrome(n: Int) = revert(n) == n
 
 /**
  * Средняя (3 балла)

@@ -98,8 +98,10 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val gradesRemap = mutableMapOf<Int, MutableList<String>>()
-    for (newKey in grades.values) gradesRemap[newKey] = mutableListOf()
-    for ((key, value) in grades) gradesRemap[value]?.add(key)
+    for ((key, value) in grades) {
+        if (!gradesRemap.containsKey(value)) gradesRemap[value] = mutableListOf()
+        gradesRemap[value]!!.add(key)
+    }
     return gradesRemap
 }
 
@@ -147,8 +149,9 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val list = mutableListOf<String>()
-    for (name in a) if (b.contains(name) && !list.contains(name)) list.add(name)
-    return list
+    val newB = b.toSet()
+    for (name in a.toSet()) if (newB.contains(name)) list.add(name)
+    return list.toList()
 }
 
 /**
@@ -189,10 +192,7 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val map = mutableMapOf<String, Double>()
-    for ((key, value) in stockPrices) {
-        if (map.containsKey(key)) map[key] = map[key]!! + value
-        else map[key] = value
-    }
+    for ((key, value) in stockPrices) map[key] = map.getOrDefault(key, 0.0) + value
     for (key in map.keys) map[key] = map[key]!! / stockPrices.count { it.first == key }
     return map
 }
@@ -214,12 +214,9 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var cheapestStuff: String? = null
-    var minPrise = Double.MAX_VALUE
     for ((key, value) in stuff)
-        if (value.second < minPrise && value.first == kind) {
-            minPrise = value.second
+        if (value.second < (stuff[cheapestStuff]?.second ?: Double.MAX_VALUE) && value.first == kind)
             cheapestStuff = key
-        }
     return cheapestStuff
 }
 
@@ -233,7 +230,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    for (char in word.toLowerCase())
+    for (char in word.toLowerCase().toSet())
         if (!chars.contains(char.toLowerCase()) && !chars.contains(char.toUpperCase())) return false
     return true
 }
@@ -253,8 +250,8 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val map = mutableMapOf<String, Int>()
     for (element in list) {
-        if (list.size - list.filter { it != element }.size > 1)
-            map[element] = list.size - list.filter { it != element }.size
+        val elementCount = list.count { it == element }
+        if (elementCount > 1) map[element] = elementCount
     }
     return map
 }
@@ -327,9 +324,10 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (i in 0 until list.size - 1)
-        for (j in (i + 1) until list.size)
-            if (list[i] + list[j] == number) return Pair(i, j)
+    val map = list.associateWith { number - it }
+    for ((key, value) in map) {
+        if (map.containsValue(key) && key != value) return Pair(list.indexOf(key), list.indexOf(value))
+    }
     return Pair(-1, -1)
 }
 
