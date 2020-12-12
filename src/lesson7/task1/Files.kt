@@ -249,10 +249,10 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
             maxLen = line.length
         }
     }
-    for (str in listOfLCW) {
+    for ((i, str) in listOfLCW.withIndex()) {
         if (str.length == maxLen) {
             writer.write(str)
-            if (str != listOfLCW.last()) writer.write(", ")
+            if (i != listOfLCW.lastIndex) writer.write(", ")
         }
     }
     writer.close()
