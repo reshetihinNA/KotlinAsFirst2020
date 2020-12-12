@@ -153,7 +153,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val list = mutableListOf<String>()
     val newB = b.toSet()
     for (name in a.toSet()) if (newB.contains(name)) list.add(name)
-    return list.toList()
+    return list
 }
 
 /**
@@ -217,7 +217,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var cheapestStuff: String? = null
     for ((key, value) in stuff)
-        if (value.second < (stuff[cheapestStuff]?.second ?: Double.MAX_VALUE) && value.first == kind)
+        if (value.first == kind && value.second < (stuff[cheapestStuff]?.second ?: Double.MAX_VALUE))
             cheapestStuff = key
     return cheapestStuff
 }
@@ -232,8 +232,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    for (char in word.toLowerCase().toSet())
-        if (!chars.contains(char.toLowerCase()) && !chars.contains(char.toUpperCase())) return false
+    if (chars.map { it.toLowerCase() }.toSet() != word.toLowerCase().toSet()) return false
     return true
 }
 
@@ -251,7 +250,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val map = mutableMapOf<String, Int>()
-    for (element in list) {
+    for (element in list.toSet()) {
         val elementCount = list.count { it == element }
         if (elementCount > 1) map[element] = elementCount
     }
@@ -326,9 +325,19 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    val map = list.indices.associateWith { list.indexOf(number - list[it]) }
+    val map = mutableMapOf<Int, MutableList<Int>>()
+    for ((i, element) in list.withIndex()) {
+        if (!map.containsKey(element)) map[element] = mutableListOf(i)
+        else map[element]!!.add(i)
+    }
     for ((key, value) in map) {
-        if (key != value && value != -1) return Pair(key, value).sorted()
+        if (map.containsKey(number - key)) {
+            return when {
+                value.size > 1 -> Pair(value[0], value[1])
+                number - key != key -> Pair(map[key]!![0], map[number - key]!![0])
+                else -> Pair(-1, -1)
+            }
+        }
     }
     return Pair(-1, -1)
 }

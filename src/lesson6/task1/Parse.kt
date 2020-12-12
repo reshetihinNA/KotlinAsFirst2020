@@ -2,6 +2,9 @@
 
 package lesson6.task1
 
+import java.lang.IllegalArgumentException
+import java.lang.NumberFormatException
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -127,7 +130,25 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val jumpToList = jumps.split(" ")
+    val heights = mutableListOf<String>()
+    val results = mutableListOf<String>()
+    var result = -1
+    for ((i, part) in jumpToList.withIndex()) {
+        if (i % 2 == 0) heights.add(part)
+        else results.add(part)
+    }
+    for ((i, part) in results.withIndex()) {
+        try {
+            val height = heights[i].toInt()
+            if (part.contains("+")) result = height
+        } catch (e: NumberFormatException) {
+            return -1
+        }
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)
@@ -138,7 +159,30 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val parts = expression.split(" ")
+    val listNumbers = mutableListOf<String>()
+    val listOfPoints = mutableListOf<String>()
+    for ((i, part) in parts.withIndex()) {
+        if (i % 2 == 0) {
+            if (!part.contains("+") && !part.contains("-")) listNumbers.add(part)
+            else throw IllegalArgumentException()
+        } else listOfPoints.add(part)
+    }
+    var sum = listNumbers[0].toInt()
+    for ((i, point) in listOfPoints.withIndex()) {
+        try {
+            when (point) {
+                "+" -> sum += listNumbers[i + 1].toInt()
+                "-" -> sum -= listNumbers[i + 1].toInt()
+                else -> throw NumberFormatException()
+            }
+        } catch (e: NumberFormatException) {
+            throw IllegalArgumentException()
+        }
+    }
+    return sum
+}
 
 /**
  * Сложная (6 баллов)
