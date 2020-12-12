@@ -232,7 +232,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    if (chars.map { it.toLowerCase() }.toSet() != word.toLowerCase().toSet()) return false
+    if (chars.map { it.toLowerCase() }.toSet() != word.toLowerCase().toSet()
+        && word.toSet().isNotEmpty()
+    ) return false
     return true
 }
 
@@ -333,8 +335,8 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     for ((key, value) in map) {
         if (map.containsKey(number - key)) {
             return when {
-                value.size > 1 -> Pair(value[0], value[1])
-                number - key != key -> Pair(map[key]!![0], map[number - key]!![0])
+                number - key == key && value.size > 1 -> Pair(value[0], value[1])
+                number - key != key -> Pair(map[key]!!.last(), map[number - key]!!.last())
                 else -> Pair(-1, -1)
             }
         }
